@@ -1,5 +1,6 @@
 <template>
   <div>base</div>
+  <!-- <h2>{{ number }}</h2> -->
 </template>
 
 <script lang="ts">
@@ -12,6 +13,15 @@ import { defineComponent } from "vue";
 export default defineComponent({
   // 当前组件的名字是App
   name: "App",
+
+  // 测试代码：setup是组合api中使用的第一个函数
+  // setup() {
+  //   // console.log("setup");
+  //   const number = 10;
+  //   return {
+  //     number,
+  //   };
+  // },
 });
 </script>
 
