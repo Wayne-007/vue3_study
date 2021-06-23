@@ -33,6 +33,7 @@ export default defineComponent({
     // ref一般用来定义一个 基本类型 的响应式数据
 
     // html模板中是不需要使用.value属性写法的
+    // count类型为 Ref 类型
     const count = ref(0);
 
     function handleClick() {
