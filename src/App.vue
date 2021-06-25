@@ -1,53 +1,129 @@
 <template>
-  <h2>reactive和ref的细节问题</h2>
-  <p>m1：{{ m1 }}</p>
-  <p>m2：{{ m2 }}</p>
-  <p>m3：{{ m3 }}</p>
-  <button @click="updata">更新数据</button>
+  <h2>计算属性和监视</h2>
+  <fieldset>
+    <legend>姓名操作</legend>
+    姓氏：<input
+      type="text"
+      placeholder="请输入姓氏"
+      v-model="user.firstName"
+    /><br />
+    名字：<input
+      type="text"
+      placeholder="请输入名字"
+      v-model="user.lastName"
+    /><br />
+  </fieldset>
+  <fieldset>
+    <legend>计算属性和监视的演示</legend>
+    姓名：<input
+      type="text"
+      placeholder="显示名字"
+      disabled
+      :value="fullName1"
+    /><br />
+    姓名：<input type="text" placeholder="显示名字" v-model="fullName2" /><br />
+    姓名：<input
+      type="text"
+      placeholder="显示名字"
+      v-model="fullName3"
+      disabled
+    /><br />
+  </fieldset>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive } from "vue";
+import {
+  computed,
+  defineComponent,
+  reactive,
+  watch,
+  ref,
+  watchEffect,
+} from "vue";
 
 export default defineComponent({
-  // ref和reactive是Vue3的Composition API中2个最重要的响应式API（ref和reactive）
-  // ref用来处理基本类型的数据，reactive用来处理对象（递归深度响应式）
-  // 如果用ref对象/数组，内部会自动将对象/数组转换为reactive的代理对象
-  // ref内部：通过给value属性添加getter/setter来实现对数据的劫持
-  // reactive内部：通过使用Proxy来实现对对象内部所有数据的劫持，并通过Reflect操作对象内部数据
-  // ref的数据操作：在js中要.value，在模板中不需要（内部解析模板时会自动添加.value）
-
   setup() {
-    const m1 = ref("hhh");
-    const m2 = reactive({
-      name: "小明",
-      wife: { name: "小红" },
-    });
-    const m3 = ref({
-      name: "小明",
-      wife: { name: "小红" },
+    const user = reactive({
+      firstName: "东方",
+      lastName: "不败",
     });
 
-    function updata() {
-      m1.value += "--·";
-      m2.name += "--·";
-      m3.value.wife.name += "--·";
-    }
+    // vue3的计算属性
+    // 计算属性的函数中如果只传入宇哥回调函数，表示的是get
+    // 如果要set，就传入一个对象
 
-    console.log("m1===>", m1);
-    console.log("m2===>", m2);
-    console.log("m3===>", m3);
+    // 第一个姓名
+    const fullName1 = computed(() => {
+      return `${user.firstName}_${user.lastName}`;
+    });
+    // 返回的是Ref类型
+    console.log("fullName1===>", fullName1);
+
+    // 第二个姓名
+    const fullName2 = computed({
+      get() {
+        return `${user.firstName}_${user.lastName}`;
+      },
+      set(val: string) {
+        // console.log("fullName2:computed:set===>", val);
+        const names = val.split("_");
+        user.firstName = names[0];
+        user.lastName = names[1];
+      },
+    });
+
+    // 第三个姓名：
+    const fullName3 = ref("");
+    // 监视——监视指定的数据
+    watch(
+      user,
+      ({ firstName, lastName }) => {
+        console.log("firstName, lastName");
+        fullName3.value = `${firstName}_${lastName}`;
+      },
+      {
+        immediate: true, //  立即监听
+        deep: true, //  深度监听
+      }
+    );
+
+    // 监视——不需要配置immediate，本身默认就会进行监视，（默认执行一次）
+    // watchEffect(() => {
+    //   fullName3.value = `${user.firstName}_${user.lastName}`;
+    // });
+
+    watchEffect(() => {
+      const names = fullName3.value.split("_");
+      user.firstName = names[0];
+      user.lastName = names[1];
+    });
+
+    // watch——可以监视多个数据的
+    // watch([user.firstName, user.lastName], () => {
+    //   // 这里的代码没有执行，user.firstName, user.lastName不是响应式的数据
+    //   console.log("---");
+    // });
+
+    watch([user.firstName, user.lastName, fullName3], () => {
+      // 这里的代码有执行，fullName3是响应式的数据
+      console.log("~~~");
+    });
+
+    // 如果要watch监听非响应式的数据，需要写成回调函数式
+    watch([() => user.firstName, () => user.lastName], () => {
+      console.log("+++");
+    });
 
     return {
-      m1,
-      m2,
-      m3,
-      updata,
+      fullName1,
+      fullName2,
+      fullName3,
+      user,
     };
   },
-  name: "App",
 });
 </script>
 
 <style scoped>
 </style>
+
