@@ -1,70 +1,69 @@
 <template>
-  <h2>reactive的使用</h2>
-  <p>姓名：{{ user.name }}</p>
-  <p>年龄：{{ user.age }}</p>
-  <p>性别：{{ user.gender }}</p>
-  <p>媳妇：{{ user.wife }}</p>
-
-  <button @click="updataUser">修改信息</button>
+  <h2>App父级组件</h2>
+  <p>{{ msg }}</p>
+  <button @click="msg += '==·'">更新数据</button>
+  <hr />
+  <Child :msg="msg" @xxx="xxx" />
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
-
-// 暴露出去一个定义好的组件
+import { defineComponent, ref } from "vue";
+// 引入子级组件
+import Child from "./components/Child.vue";
 export default defineComponent({
-  name: "App",
+  // setup细节问题：
+  // setup是在beforeCreated生命周期回调之前就执行了，而且就执行一次
+  // 由上可推断初：setup在执行的时候，当前的组件还没有创建出来，也就意味着——组件实例对象this根本就不能用
+  // this是undefined，说明：不能通过this再去调用data/computed/methods/props中的相关内容了
+  // 其实所有的composition API相关回调函数中也都不可以
 
-  // 需求：显示用户的相关信息，点击按钮，可以更新用户的相关信息数据
+  // setup中的返回值是一个对象，内部的属性和方法是给html模板使用的
+  // setup中的对象内部的属性和data函数中的return对象的属性都可以在html模板中使用
+  // setup中的对象中的属性和data函数中的对象中的属性会合并为组件对象的属性
+  // setup中的对象中的方法和methods对象中的方法会合并为组件对象的方法
+  // 在Vue3中尽量不要混合的使用data和setup及methods和setup，setup不能访问data和methods
+  // setup不能是一个async函数：因为返回值不再是return的对象，而是Promise，模板看不到return对象中的属性数据
 
-  // reactive
-  // 作用：定义多个数据的响应式
-  // const proxy = reactive(obj)：接收一个 普通对象 然后返回该 普通对象 的 响应式代理器对象
-  // 响应式转换是“深层的”；会影响对象内部所有的嵌套的属性
-  // 内部基于ES6的Proxy实现，通过 代理对象 操作 源对象 内部数据都是响应式的
+  // 数据初始化的生命周期回调
+  beforeCreate() {
+    console.log("beforeCreate===>");
+  },
 
+  // 界面渲染完毕
+  mounted() {
+    console.log("mounted：this===>", this);
+  },
   setup() {
-    // const obj: any = {
-    const obj = {
-      name: "小明",
-      age: 20,
-      wife: {
-        name: "小乔",
-        age: 18,
-        cars: ["奔驰", "宝马", "奥迪"],
-      },
+    console.log("setup：this===>", this);
+    const msg = ref("这是一个字符串");
+    const showMessage2 = () => {
+      console.log("showMessage2===>");
     };
-    // 把数据变成响应式数据
-    // 返回的是一个Proxy的代理对象，被代理的目标对象就是obj对象
-    const user = reactive<any>(obj);
 
-    const updataUser = () => {
-      // 直接使用目标对象的方式来更新目标对象中的成员的值，是不可能的，只能使用代理对象的方式来更新数据（响应式数据）
-      // obj.name += "--";
-      // 正确的更新方式
-      // user.name += "==";
-      // user.age += 2;
-      // user.wife.cars[0] = "玛莎拉蒂";
-      // user--->代理对象，obj--->目标对象
-      // user对象或者obj对象添加一个新的属性，哪一种方式会影响界面更新
-      // obj.gender = "男";
-      // user.gender = "男";
-      // user对象或者是obj对象移除一个新的属性，哪一种方式会影响界面更新
-      // delete obj.age
-      // delete user.age
-      // 总结：如果操作代理对象，目标对象中的数据也会随之变化，同时如果想要在操作数据的时候，界面也要跟着重新更新渲染
-      // 通过当前的代理对象找到该对象中的某个属性，更改该属性中的某个数组的数据
-      // user.wife.cars[1] = "玛莎拉蒂";
-
-      // 通过当前的代理对象把目标对象中的某个数组属性添加一个新的属性;
-      // user.wife.cars.push("玛莎拉蒂");
-      user.wife.cars[4] = "玛莎拉蒂";
+    const xxx = (text: string) => {
+      msg.value += text;
     };
 
     return {
-      user,
-      updataUser,
+      // setup中一般都是返回一个对象，对象中的属性和方法都可以在html模板中直接使用
+      msg,
+      showMessage2,
+      xxx,
     };
+  },
+  methods: {
+    showMessage1() {
+      console.log("showMessage1===>");
+    },
+  },
+  data() {
+    return {
+      msg2: "value",
+    };
+  },
+  name: "App",
+  components: {
+    Child,
   },
 });
 </script>

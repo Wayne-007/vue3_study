@@ -53,6 +53,12 @@ export default defineComponent({
       // delete obj.age
       // delete user.age
       // 总结：如果操作代理对象，目标对象中的数据也会随之变化，同时如果想要在操作数据的时候，界面也要跟着重新更新渲染
+      // 通过当前的代理对象找到该对象中的某个属性，更改该属性中的某个数组的数据
+      // user.wife.cars[1] = "玛莎拉蒂";
+
+      // 通过当前的代理对象把目标对象中的某个数组属性添加一个新的属性;
+      // user.wife.cars.push("玛莎拉蒂");
+      user.wife.cars[4] = "玛莎拉蒂";
     };
 
     return {
