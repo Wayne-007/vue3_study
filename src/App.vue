@@ -1,66 +1,57 @@
 <template>
-  <h2>hooks的使用：鼠标点击任意位置显示x，y轴坐标</h2>
-  <p>x：{{ x }}</p>
-  <p>y：{{ y }}</p>
-
+  <h2>toRefs的使用</h2>
+  <!-- <p>name:{{ state.name }}</p>
+  <p>age:{{ state.age }}</p> -->
+  <p>name:{{ name }}</p>
+  <p>age:{{ age }}</p>
   <br />
-  <div v-if="loading">加载中...</div>
-  <div v-else-if="errorMsg">错误信息：{{ errorMsg }}</div>
-  <div v-else>
-    <ul>
-      <li>id：{{ data.id }}</li>
-      <li>地址：{{ data.address }}</li>
-      <li>距离：{{ data.distance }}</li>
-    </ul>
-  </div>
-  <hr />
-  <div>
-    <ul v-for="item in data" :key="item.id">
-      <li>id:{{ item.id }}</li>
-      <li>title:{{ item.title }}</li>
-      <li>price:{{ item.price }}</li>
-    </ul>
-  </div>
+  <p>name2:{{ name2 }}</p>
+  <p>age2:{{ age2 }}</p>
 </template>
 
 <script lang="ts">
-import { defineComponent, watch } from "vue";
-import useMousePosition from "./hooks/useMousePosition";
-import useRequest from "./hooks/useRequest";
-
-// interface Address {
-//   id: number;
-//   address: string;
-//   distance: string;
-// }
-
-interface Products {
-  id: string;
-  titile: string;
-  price: string;
-}
+import { defineComponent, reactive, toRefs } from "vue";
 
 export default defineComponent({
   setup() {
-    const { x, y } = useMousePosition();
-
-    // const { loading, data, errorMsg } = useRequest<Address>(
-    //   "/data/address.json"
-    // );
-    const { loading, data, errorMsg } = useRequest<Products[]>(
-      "/data/products.json"
-    );
-
-    watch(data, () => {
-      if (data && data.value) console.log(data.value.length);
+    const state = reactive({
+      name: "自来也",
+      age: 47,
     });
+    // torefs可以把一个响应式对象转换成普通对象，该普通对象的每个property都是一个ref
+    // const state2 = toRefs(state);
+    // console.log("state2===>", state2);
+
+    const { name, age } = toRefs(state);
+
+    function useFeatureX() {
+      const state = reactive({
+        name2: "自来也",
+        age2: 47,
+      });
+      return {
+        ...toRefs(state),
+      };
+    }
+
+    const { name2, age2 } = useFeatureX();
+
+    // 定时器更新数据，如果数据变化了，界面也会随之变化，肯定是响应式的数据
+    setInterval(() => {
+      //   state.name += "~~·";
+      //   state2.name.value += "x/";
+      name.value += "~0~";
+      age2.value += 1;
+    }, 1000);
 
     return {
-      x,
-      y,
-      loading,
-      data,
-      errorMsg,
+      //   state, // 响应式数据
+      //   ...state, // 不是响应式数据
+      //   ...state2, // torefs返回来的对象
+      name,
+      age,
+      name2,
+      age2,
     };
   },
 });
