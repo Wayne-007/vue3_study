@@ -61,14 +61,16 @@ export default defineComponent({
       },
     });
     const update = () => {
+      // 注意：多个数据同时修改，浅监听和深度监听的效果是一样的
+
       // m1.name += "==>";
-      // m1.car.name += "==>";
+      m1.car.name += "==>";
       // m2.name += "==>";
-      // m2.car.name += "==>";
-      // m3.value.name += "===>";
-      // m3.value.car.name += "===>";
+      m2.car.name += "==>";
+      // m3.value.name += "==>";
+      m3.value.car.name += "==>";
       // m4.value.name += "==>";
-      // m4.value.car.name += "==>";
+      m4.value.car.name += "==>";
     };
     return {
       m1,
