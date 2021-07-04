@@ -145,6 +145,15 @@
 
         // 拦截到读取、删除
         // delete proxyUser2.car.name
+
+
+        // ==================
+
+        console.log(isRef(ref({})))
+        console.log(isReadonly(readonly({})))
+        console.log(isReactive(reactive({})))
+        console.log(isProxy(readonly({})))
+        console.log(isProxy(reactive({})))
     </script>
 </body>
 
