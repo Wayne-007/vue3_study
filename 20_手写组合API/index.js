@@ -1,6 +1,48 @@
-// shallowReactive（浅的劫持，浅的监视，浅的响应数据）与 reactive（深的）
+// shallowReadonly和readonly
+const readonlyHandler = {
+    get(target, prop) {
+        const result = Reflect.get(target, prop)
+        console.log('拦截了 读取 数据', target, prop)
+        return result
+    },
+    set(target, prop, value) {
+        console.warn('只能 读取，不能写入', target, prop, value)
+        return true
+    },
+    deleteProperty(target, prop) {
+        console.warn('只能 读取，不能删除', target, prop)
+        return true
+    }
+}
 
-const handleReactive = {
+
+function shallowReadonly(target) {
+    if (target && typeof target === 'object') {
+        return new Proxy(target, readonlyHandler)
+    }
+    return target
+}
+
+function readonly(target) {
+    if (target && typeof target === 'object') {
+        if (Array.isArray(target)) {
+            target.forEach((item, index) => {
+                target[index] = readonly(item)
+            })
+        } else {
+            Object.keys(target).forEach(key => {
+                target[key] = readonly(target[key])
+            })
+        }
+        return new Proxy(target, readonlyHandler)
+    }
+    return target
+
+}
+
+
+// shallowReactive（浅的劫持，浅的监视，浅的响应数据）与 reactive（深的）
+const reactiveHandler = {
     get(target, prop) {
         const result = Reflect.get(target, prop)
         console.log('拦截了 读取 数据', target, prop, result)
@@ -22,7 +64,7 @@ const handleReactive = {
 function shallowReactive(target) {
     // 判断当前的目标书不是object类型（数组/对象）
     if (target && typeof target === 'object') {
-        return new Proxy(target, handleReactive)
+        return new Proxy(target, reactiveHandler)
     }
     // 如果传入的是基本类型数据，就直接返回
     return target
@@ -41,7 +83,7 @@ function reactive(target) {
                 target[key] = reactive(target[key])
             })
         }
-        return new Proxy(target, handleReactive)
+        return new Proxy(target, reactiveHandler)
     }
     // 如果传入的是基本类型数据，就直接返回
     return target

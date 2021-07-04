@@ -10,6 +10,58 @@
 <body>
     <script src="./index.js"></script>
     <script>
+        // 测试shallowReadonly和readonly
+        const proxyUser4 = readonly({
+            name: '小明',
+            cars: ['玛莎拉蒂', '保时捷']
+        })
+
+        // 调用 读取
+        // proxyUser4.name
+
+        // 拦截了 写入
+        // proxyUser4.name = '=='
+
+        // 拦截了 删除
+        // delete proxyUser4.name
+
+        // 调用了两次读取，第一次读取cars、第二次读取了cars[0]
+        // proxyUser4.cars[0]
+
+        // 读取了 cars，拦截了 写入
+        // proxyUser4.cars[0] = '==='
+
+        // 拦截了 读取， 删除
+        // delete proxyUser4.cars[0]
+
+
+        const proxyUser3 = shallowReadonly({
+            name: '小明',
+            cars: ['玛莎拉蒂', '保时捷']
+        })
+
+        // 调用 读取
+        // proxyUser3.name
+
+        // 拦截了写入，数据未改变
+        // proxyUser3.name = 'hhh'
+
+        // 拦截删除
+        // delete proxyUser3.name
+
+        // 调用 读取
+        // proxyUser3.cars[0]
+
+        // 调用 读取，数据改变
+        // proxyUser3.cars[0] = 'hhh'
+
+        // 调用 读取，删除未成功
+        // delete proxyUser3.cars[0]
+
+
+        // ==================
+
+
         /*         
         const proxyUser1 = shallowReactive({
             name: '小明',
@@ -35,12 +87,12 @@
         // delete proxyUser1.car.name
          */
 
-        const proxyUser2 = reactive({
-            name: '小明',
-            car: {
-                name: '保时捷'
-            }
-        })
+        // const proxyUser2 = reactive({
+        //     name: '小明',
+        //     car: {
+        //         name: '保时捷'
+        //     }
+        // })
 
         // 拦截到写入
         // proxyUser2.name = '小红'
@@ -49,7 +101,7 @@
         // proxyUser2.car.name = '玛莎拉蒂'
 
         // 拦截到了删除
-        delete proxyUser2.name
+        // delete proxyUser2.name
 
         // 拦截到读取、删除
         // delete proxyUser2.car.name
