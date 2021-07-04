@@ -1,26 +1,38 @@
 <template>
-  <h2>Fragment和Teleport组件介绍</h2>
-  <hr />
-  <dl>
-    <dt>Fragment</dt>
-    <dd>在Vue2中：组件必须有一个根标签；</dd>
-    <dd>
-      在Vue3中：组件可以没有根标签，内部会将多个标签包含在一个Fragment虚拟元素中；
-    </dd>
-    <dd>好处：减少标签层级、减少内存占用</dd>
-  </dl>
-  <hr />
-  <ModalButton />
+  <h2>
+    Suspense（悬疑）：允许我们的应用程序在等待移步组件时渲染一些后备内容，可以让我们创建一个平滑的用户体验
+  </h2>
+  <Suspense>
+    <template #default>
+      <!-- 异步组件 -->
+      <AsyncComponent />
+    </template>
+    <template v-slot:fallback>
+      <!-- loading的内容 -->
+      <h2>Loading</h2>
+    </template>
+  </Suspense>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import ModalButton from "./components/modalButton.vue";
+import { defineComponent, defineAsyncComponent } from "vue";
+
+// 组件的引入有：动态引入和静态引入
+
+// vue2中的动态引入方式：（在vue3中这种写法不行）
+// const AsyncComponent = () => import("./components/AsyncComponent.vue");
+
+// vue3中的动态引入组件的写法
+// const AsyncComponent = defineAsyncComponent(
+//   () => import("./components/AsyncComponent.vue")
+// );
+
+import AsyncComponent from "./components/AsyncComponent.vue";
 
 export default defineComponent({
   name: "App",
   components: {
-    ModalButton,
+    AsyncComponent,
   },
   setup() {
     return {};

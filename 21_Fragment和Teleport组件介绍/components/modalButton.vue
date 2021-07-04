@@ -5,7 +5,9 @@
   <Teleport to="body">
     <div v-if="modalShow" class="modal">
       <div>
-        <p>对话框</p>
+        <p>
+          Teleport提供了一种干净的方法，让组件的html在父组件界面外的特定标签（很可能是body）下面插入显示
+        </p>
         <button @click="modalShow = false">关闭对话框</button>
       </div>
     </div>
