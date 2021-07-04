@@ -88,3 +88,34 @@ function reactive(target) {
     // 如果传入的是基本类型数据，就直接返回
     return target
 }
+
+
+// shallowRef和ref
+function shallowRef(target) {
+    return {
+        _value: target,
+        get value() {
+            console.log('劫持 读取 数据')
+            return this._value
+        },
+        set value(val) {
+            console.log('劫持 写入 数据，准备更新页面')
+            this._value = val
+        }
+    }
+}
+
+function ref(target) {
+    target = reactive(target)
+    return {
+        _value: target,
+        get value() {
+            console.log('劫持 读取 数据')
+            return this._value
+        },
+        set value(val) {
+            console.log('劫持 写入 数据，准备更新页面')
+            this._value = val
+        }
+    }
+}

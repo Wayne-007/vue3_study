@@ -10,11 +10,51 @@
 <body>
     <script src="./index.js"></script>
     <script>
+        // const ref1 = shallowRef({
+        //     name: '小明',
+        //     car: {
+        //         color: 'red'
+        //     }
+        // })
+
+        // 读取
+        // console.log(ref1.value)
+
+        // 劫持 写入，修改成功
+        // ref1.value = 'hh'
+
+        // 劫持 读取，修改成功
+        // ref1.value.car.color = 'hh'
+        // console.log(ref1.value)
+
+
+        // const ref2 = ref({
+        //     name: '小明',
+        //     car: {
+        //         color: 'red'
+        //     }
+        // })
+
+        // 劫持 读取
+        // ref2.value
+
+        // 劫持写入
+        // ref2.value = 'xxx'
+
+        // 劫持读取，reactive：劫持读取 car，劫持读取color
+        // ref2.value.car.color
+
+        // 劫持读取，reactive：劫持 读取car，劫持 写入color
+        // ref2.value.car.color = 'hh'
+
+
+        // === === === === === === === === =
+
         // 测试shallowReadonly和readonly
-        const proxyUser4 = readonly({
-            name: '小明',
-            cars: ['玛莎拉蒂', '保时捷']
-        })
+        // const proxyUser4 = readonly({
+        //     name: '小明',
+        //     cars: ['玛莎拉蒂', '保时捷']
+        // })
 
         // 调用 读取
         // proxyUser4.name
@@ -35,10 +75,10 @@
         // delete proxyUser4.cars[0]
 
 
-        const proxyUser3 = shallowReadonly({
-            name: '小明',
-            cars: ['玛莎拉蒂', '保时捷']
-        })
+        // const proxyUser3 = shallowReadonly({
+        //     name: '小明',
+        //     cars: ['玛莎拉蒂', '保时捷']
+        // })
 
         // 调用 读取
         // proxyUser3.name
